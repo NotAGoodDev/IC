@@ -63,7 +63,7 @@ $(function () {
                         limpiarCasilla(inicio)
 
                     $("#" + this.id).css("background-color", "#304ffe").text("Inicio")
-                    // console.log(posicionMatricial(posicion))
+                    console.log(posicionMatricial(posicion))
                     inicio = posicion;
                 }
             }
@@ -78,7 +78,7 @@ $(function () {
 
             if (posicion == inicio || obstaculos.includes(posicion)) {
                 console.log("Ocupada")
-                // console.log("Inicio: " + inicio + "\n" + "Meta: " + meta + "\n" + "Obstaculos: " + obstaculos)
+                console.log("Inicio: " + inicio + "\n" + "Meta: " + meta + "\n" + "Obstaculos: " + obstaculos)
 
             } else {
                 if (click["meta"]) {
@@ -86,7 +86,7 @@ $(function () {
                         limpiarCasilla(meta)
 
                     $("#" + this.id).css("background-color", "#00c853").text("Meta")
-                    // console.log(posicionMatricial(posicion))
+                    console.log(posicionMatricial(posicion))
                     meta = posicion;
                 }
             }
@@ -113,7 +113,7 @@ $(function () {
                     }
                     else {
                         $("#" + this.id).css("background-color", "#dd2c00").text("!")
-                        // console.log(posicionMatricial(posicion))
+                        console.log(posicionMatricial(posicion))
                         obstaculos.push(posicion)
                     }
                 }
@@ -170,8 +170,8 @@ function posicionLineal(row, column) {
 
 function posicionMatricial(position) {
     position -= 1
-    let x = Math.floor((position / rows))
-    let y = (position) % columns
+    let x = (position) % columns
+    let y = Math.floor((position / rows))
 
     return [x, y];
 }
