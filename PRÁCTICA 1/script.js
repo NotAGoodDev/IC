@@ -65,6 +65,7 @@ $(function () {
                     $("#" + this.id).css("background-color", "#304ffe").text("Inicio")
                     // console.log(posicionMatricial(posicion))
                     inicio = posicion;
+                    inicializarMapa(columns, rows, posicionMatricial(posicion), [4,2]);// como le pasamos a la vez el inicio y el fin
                 }
             }
         })
