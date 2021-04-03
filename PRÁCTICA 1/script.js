@@ -102,7 +102,7 @@ $(function () {
             if (posicion == inicio || posicion == meta) {
                 console.log("Ocupada")
                 // console.log("Inicio: " + inicio + "\n" + "Meta: " + meta + "\n" + "Obstaculos: " + obstaculos)
-                
+
             } else {
                 if (click["obstaculos"]) {
                     if (obstaculos.includes(posicion)) {
@@ -122,18 +122,19 @@ $(function () {
     })
 
     $("#buscar").click(function () {
-        if(columns != undefined && rows != undefined
+        if (columns != undefined && rows != undefined
             && inicio != undefined && meta != undefined) {
-                inicializarMapa(
-                    columns,
-                    rows,
-                    posicionMatricial(inicio),
-                    posicionMatricial(meta)
-                );
+            inicializarMapa(
+                columns,
+                rows,
+                posicionMatricial(inicio),
+                posicionMatricial(meta)
+            );
 
-                let s = buscarCamino();
-                pintarCamino(s);
-            }
+            let s = buscarCamino();
+            console.log(s);
+            pintarCamino(s);
+        }
         else {
             alert("No has establecido un inicio y un final");
         }
@@ -214,9 +215,11 @@ function activarBoton(boton) {
 }
 
 function pintarCamino(nodos) {
-    nodos.forEach( nodo => {
-        let posicion = posicionLineal(nodo.y + 1, nodo.x + 1);
-        console.log(posicion);
-        $("#elem" + posicion).css("background-color", "#7cb342").text("")
-    })
+    for (let i = 0; i < nodos.length; i++) {
+        let posicion = posicionLineal(nodos[i].y + 1, nodos[i].x + 1);
+
+        setTimeout(function () {
+            $("#elem" + posicion).css("background-color", "#7cb342").text("");
+        }, 500 * i);
+    }
 }

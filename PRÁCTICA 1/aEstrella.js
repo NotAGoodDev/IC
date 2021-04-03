@@ -20,6 +20,9 @@ const direcciones = [
 function nodoMinimaF(lista) {
     indiceMinima = 0; //suponemos que está en el primero
 
+
+    lista.sort((a, b) => (a.f < b.f) ? 1 : -1)
+
     for (let i = 0; i < lista.length; i++) {
         if (lista[i].f < lista[indiceMinima].f) {
             indiceMinima = i;
@@ -92,8 +95,8 @@ function nodo(i, j) {
 function inicializarMapa(c, f, p_i, p_m) {
     listaAbierta = [];
     listaCerrada = [];
-    inicio_i = p_i[1]; //me las pasa al reves
-    inicio_j = p_i[0]; //me las pasa al reves
+    inicio_i = p_i[0];
+    inicio_j = p_i[1];
     fin_i = p_m[0];
     fin_j = p_m[1];
     columnas = c;
@@ -127,11 +130,13 @@ function buscarCamino() {
 
     while (!(fallo || fin)) {
 
-        if (listaAbierta.length <= 0) {
+        if (listaAbierta.length == 0) {
             fallo = true;
         }
 
         n_actual = nodoMinimaF(listaAbierta);
+        console.log(n_actual);
+        console.log("__________")
         eliminarDeArray(n_actual, listaAbierta);
 
         listaCerrada.push(n_actual);
@@ -176,6 +181,7 @@ function buscarCamino() {
     }
 
     if(fin){
+        console.log(listaCerrada);
         let solucion = [];
         let actual = listaCerrada[listaCerrada.length - 1];
         let padre = actual.padre;
