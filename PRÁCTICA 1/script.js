@@ -65,7 +65,6 @@ $(function () {
                     $("#" + this.id).css("background-color", "#304ffe").text("Inicio")
                     console.log(posicionMatricial(posicion))
                     inicio = posicion;
-                    inicializarMapa(columns, rows, posicionMatricial(posicion), [4,2]);// como le pasamos a la vez el inicio y el fin
                 }
             }
         })
@@ -86,7 +85,7 @@ $(function () {
                     if (meta)
                         limpiarCasilla(meta)
 
-                    $("#" + this.id).css("background-color", "#00c853").text("Meta")
+                    $("#" + this.id).css("background-color", "#f4511e").text("Meta")
                     console.log(posicionMatricial(posicion))
                     meta = posicion;
                 }
@@ -113,13 +112,31 @@ $(function () {
                         obstaculos.splice(posArray, 1)
                     }
                     else {
-                        $("#" + this.id).css("background-color", "#dd2c00").text("!")
+                        $("#" + this.id).css("background-color", "#ffd600").text("!")
                         console.log(posicionMatricial(posicion))
                         obstaculos.push(posicion)
                     }
                 }
             }
         })
+    })
+
+    $("#buscar").click(function () {
+        if(columns != undefined && rows != undefined
+            && inicio != undefined && meta != undefined) {
+                inicializarMapa(
+                    columns,
+                    rows,
+                    posicionMatricial(inicio),
+                    posicionMatricial(meta)
+                );
+
+                let s = buscarCamino();
+                pintarCamino(s);
+            }
+        else {
+            alert("No has establecido un inicio y un final");
+        }
     })
 })
 
@@ -194,4 +211,12 @@ function activarBoton(boton) {
     $("#obstaculos").css("background-color", "#b2dfdb");
 
     $("#" + boton).css("background-color", "#4db6ac");      //Todo normal y después el boton distinto
+}
+
+function pintarCamino(nodos) {
+    nodos.forEach( nodo => {
+        let posicion = posicionLineal(nodo.y + 1, nodo.x + 1);
+        console.log(posicion);
+        $("#elem" + posicion).css("background-color", "#7cb342").text("")
+    })
 }
