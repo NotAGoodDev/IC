@@ -7,7 +7,7 @@ let listaAbierta;
 let listaCerrada;
 
 const direcciones = [
-    [1, 1], 
+    [1, 1],
     [1, 0],
     [1, -1],
     [0, 1],
@@ -15,7 +15,7 @@ const direcciones = [
     [-1, -1],
     [-1, 1],
     [-1, 0],
-] 
+]
 
 function nodoMinimaF(lista) {
     indiceMinima = 0; //suponemos que está en el primero
@@ -69,16 +69,15 @@ function nodo(i, j) {
         let i = this.i;
         let j = this.j;
 
-        direcciones.forEach( direccion => {
-            
+        direcciones.forEach(direccion => {
+
             let x = i + direccion[0];
             let y = j + direccion[1];
 
 
             if (x >= 0 && x < columnas
-                && y >= 0 && y < filas)
-            {
-                if(mapa[x][y] == undefined) {
+                && y >= 0 && y < filas) {
+                if (mapa[x][y] == undefined) {
                     mapa[x][y] = new nodo(x, y)
                 }
 
@@ -87,7 +86,7 @@ function nodo(i, j) {
         })
 
         // falta comprobar que no son obstaculos o padre
-        
+
     }
 
 }
@@ -113,10 +112,10 @@ function inicializarMapa(c, f, p_i, p_m) {
     //creo el nodo meta
     met = new nodo(fin_i, fin_j);
     mapa[fin_i][fin_j] = met;
-    
+
     //añado el nodo inicial a listaAbierta
     listaAbierta.push(inici);
-    
+
     //añado h y f al nodo inicio
     inici.h = distancia(inici, met);
     inici.f = inici.g + inici.h;
@@ -135,58 +134,66 @@ function buscarCamino() {
         }
 
         n_actual = nodoMinimaF(listaAbierta);
-        console.log(n_actual);
-        console.log("__________")
-        eliminarDeArray(n_actual, listaAbierta);
 
-        listaCerrada.push(n_actual);
+        if (n_actual !== undefined) {
+            eliminarDeArray(n_actual, listaAbierta);
 
-        if (n_actual === met) {
-            fin = true;
-        }
+            listaCerrada.push(n_actual);
 
-        n_actual.expandir();
+            console.log("NAct: [" + n_actual.i + ", " + n_actual.j + "]");
+            console.log("Meta: [" + met.i + ", " + met.j + "]")
+            console.log("_____________________")
 
-        n_actual.hijos.forEach(hijo => {
-            
-            let nuevaDistancia = n_actual.g + distancia(n_actual, hijo);
 
-            if (listaAbierta.includes(hijo)) {
-                if (nuevaDistancia < hijo.g) {
-                    hijo.g = nuevaDistancia;
+            if (n_actual == met) {
+                fin = true;
+                break;
+            }
+
+            n_actual.expandir();
+
+            n_actual.hijos.forEach(hijo => {
+
+                let nuevaDistancia = n_actual.g + distancia(n_actual, hijo);
+
+                if (listaAbierta.includes(hijo)) {
+                    if (nuevaDistancia < hijo.g) {
+                        hijo.g = nuevaDistancia;
+                        hijo.f = hijo.g + hijo.h;
+                        hijo.padre = n_actual;
+                    }
+
+                } else if (listaCerrada.includes(hijo)) {
+                    if (nuevaDistancia < hijo.g) {
+                        //cambiar la g, el padre y hacer recorrido en profundidad de sus hijos
+                    }
+
+                } else { //no está ni en abierta ni en cerrada
+                    hijo.g = n_actual.g + distancia(n_actual, hijo);
+                    hijo.h = distancia(hijo, met);
                     hijo.f = hijo.g + hijo.h;
                     hijo.padre = n_actual;
+                    listaAbierta.push(hijo);
                 }
+            })
 
-            } else if (listaCerrada.includes(hijo)) {
-                if (nuevaDistancia < hijo.g) {
-                    //cambiar la g, el padre y hacer recorrido en profundidad de sus hijos
-                }
 
-            } else { //no está ni en abierta ni en cerrada
-                hijo.g = n_actual.g + distancia(n_actual, hijo);
-                hijo.h = distancia(hijo, met);
-                hijo.f = hijo.g + hijo.h;
-                hijo.padre = n_actual;
-                listaAbierta.push(hijo);
-            }
-        })
-    
-        
-        // console.log(mapa);
-        // console.log(m);
-        // console.log(listaAbierta);
-        // console.log(listaCerrada);
+            // console.log(mapa);
+            // console.log(m);
+            // console.log(listaAbierta);
+            // console.log(listaCerrada);
+
+        }
 
     }
 
-    if(fin){
+    if (fin) {
         console.log(listaCerrada);
         let solucion = [];
         let actual = listaCerrada[listaCerrada.length - 1];
         let padre = actual.padre;
 
-        while(padre) {
+        while (padre) {
             actual = padre;
             solucion.push({
                 x: actual.i,
