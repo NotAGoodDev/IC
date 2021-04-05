@@ -199,7 +199,6 @@ function buscarCamino() {
     }
 
     if (fin) {
-        console.log(listaCerrada);
         let solucion = [];
         let actual = listaCerrada[listaCerrada.length - 1];
         let padre = actual.padre;
@@ -216,11 +215,9 @@ function buscarCamino() {
         solucion.pop(); //No nos interesa el nodo de inicio.
         solucion.reverse(); //Para dibujar el camino, del principio
 
-        console.log(solucion);
         return solucion;
     } else {
-        console.log("-1");
-        return -1;
+        return null;
     }
 
     /*console.log("metaaaaaaaaaaa");

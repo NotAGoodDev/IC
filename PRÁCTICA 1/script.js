@@ -5,6 +5,7 @@
     let meta;
     let obstaculos;
     let click;
+    let solucion;
 
     $(function () {
         rows = 5;
@@ -125,6 +126,12 @@
             if (columns != undefined && rows != undefined
                 && inicio != undefined && meta != undefined) {
 
+                if(solucion != undefined) {
+                    solucion.forEach(celda => {
+                        limpiarCasilla(posicionLineal(celda.x + 1, celda.y + 1));
+                    });
+                }
+
                 inicializarMapa(
                     columns,
                     rows,
@@ -133,14 +140,13 @@
                     obstaculos.map(obstaculo => posicionMatricial(obstaculo))
                 );
 
-                let s = buscarCamino();
-                console.log(s);
+                solucion = buscarCamino();
 
-                if (s.length > 0) {
-                    pintarCamino(s);
-                } else if (s.length == 0) {
+                if (solucion.length > 0) {
+                    pintarCamino(solucion);
+                } else if (solucion.length == 0) {
                     alert("Las celdas son contiguas, no se puede dibujar el camino");
-                } else if(s == -1) {
+                } else if(solucion == null) {
                     alert("No hay un camino posible");
                 }
             }
@@ -159,7 +165,7 @@
         for (let row = 1; row <= rows; row++) {
 
             for (let column = 1; column <= columns; column++) {
-                actualElement = posicionLineal(row, column);
+                actualElement = posicionLineal(column, row);
                 $(".tabla")
                     .append('<div id="elem' + actualElement + '" class="elem"></div>')
 
@@ -192,7 +198,7 @@
             .after('<h3 class="penalizacion">Penalizacion: ' + penalizacion + '</h3>')
     }
 
-    function posicionLineal(row, column) {
+    function posicionLineal(column, row) {
         return columns * (row - 1) + column;
     }
 
@@ -226,8 +232,9 @@
     }
 
     function pintarCamino(nodos) {
+
         for (let i = 0; i < nodos.length; i++) {
-            let posicion = posicionLineal(nodos[i].y + 1, nodos[i].x + 1);
+            let posicion = posicionLineal(nodos[i].x + 1, nodos[i].y + 1);
 
             setTimeout(function () {
                 $("#elem" + posicion).css("background-color", "#7cb342").text("");
