@@ -149,7 +149,22 @@ $(function () {
 
             if (solucion != undefined) {
                 solucion.forEach(celda => {
-                    limpiarCasilla(posicionLineal(celda.x + 1, celda.y + 1));
+                    let posArray = posicionArrayObstaculo(posicionLineal(celda.x + 1, celda.y + 1));
+                    let posicion = posicionLineal(celda.x + 1, celda.y + 1);
+
+                    if (posArray != -1) {
+
+                        if (obstaculos[posArray].penalizacion == Infinity)
+                            $("#elem" + posicion).css("background-color", "#ffd600").text("∞");
+                        else if (obstaculos[posArray].penalizacion > 0) {
+                            $("#elem" + posicion).css("background-color", "#ffd600").text(penalizacion);
+                        } else {
+                            limpiarCasilla(posicion);
+                        }
+                    }
+                    else {
+                        limpiarCasilla(posicion);
+                    }
                 });
             }
 

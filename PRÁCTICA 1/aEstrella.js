@@ -44,19 +44,34 @@ function distancia(nodo1, nodo2) {
         + Math.pow((nodo2.j - nodo1.j), 2));
 }
 
-function esObstaculo(nodo) {
-    let obstaculo = false;
+function esInaccesible(nodo) {
+    let inaccesible = false;
     obstaculs.forEach(obs => {
         if (obs.x == nodo.i
             && obs.y == nodo.j
             && obs.penalizacion != undefined
-            && obs.penalizacion != Infinity) {
-                
-            obstaculo = true;
+            && obs.penalizacion == Infinity) {
+
+            inaccesible = true;
         }
     })
 
-    return obstaculo;
+    return inaccesible;
+}
+
+function penalizacionObstaculos(i, j) {
+    let p = 0;
+
+    obstaculs.forEach(obs => {
+        if (obs.x == i
+            && obs.y == j) {
+
+            p = obs.penalizacion
+        }
+
+    })
+
+    return p;
 }
 
 // function busquedaArray(lista, elem) {
@@ -97,7 +112,6 @@ function nodo(i, j) {
                 this.hijos.push(mapa[x][y]);
             }
         })
-
         // falta comprobar que no son obstaculos o padre
 
     }
@@ -113,6 +127,9 @@ function inicializarMapa(c, f, p_i, p_m, o) {
     fin_j = p_m[1];
     columnas = c;
     filas = f;
+    //añado obstaculos
+    obstaculs = o;
+
     mapa = new Array(columnas);
     for (let i = 0; i < mapa.length; i++) {
         mapa[i] = new Array(filas);
@@ -132,9 +149,6 @@ function inicializarMapa(c, f, p_i, p_m, o) {
     //añado h y f al nodo inicio
     inici.h = distancia(inici, met);
     inici.f = inici.g + inici.h;
-
-    //añado obstaculos
-    obstaculs = o;
 }
 
 function buscarCamino() {
@@ -161,7 +175,7 @@ function buscarCamino() {
                 break;
             }
 
-            if (!esObstaculo(n_actual)) {
+            if (!esInaccesible(n_actual)) {
                 n_actual.expandir();
 
                 n_actual.hijos.forEach(hijo => {
@@ -171,7 +185,7 @@ function buscarCamino() {
                     if (listaAbierta.includes(hijo)) {
                         if (nuevaDistancia < hijo.g) {
                             hijo.g = nuevaDistancia;
-                            hijo.f = hijo.g + hijo.h;
+                            hijo.f = hijo.g + hijo.h + penalizacionObstaculos(hijo.i, hijo.j);
                             hijo.padre = n_actual;
                         }
 
@@ -183,14 +197,12 @@ function buscarCamino() {
                     } else { //no está ni en abierta ni en cerrada
                         hijo.g = n_actual.g + distancia(n_actual, hijo);
                         hijo.h = distancia(hijo, met);
-                        hijo.f = hijo.g + hijo.h;
+                        hijo.f = hijo.g + hijo.h + penalizacionObstaculos(hijo.i, hijo.j);
                         hijo.padre = n_actual;
                         listaAbierta.push(hijo);
                     }
                 })
             }
-
-
 
             // console.log(mapa);
             // console.log(m);
