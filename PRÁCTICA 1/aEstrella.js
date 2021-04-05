@@ -44,16 +44,19 @@ function distancia(nodo1, nodo2) {
         + Math.pow((nodo2.j - nodo1.j), 2));
 }
 
-function noObstaculo(nodo) {
-    let existe = false;
+function esObstaculo(nodo) {
+    let obstaculo = false;
     obstaculs.forEach(obs => {
-        if (obs[0] == nodo.i
-            && obs[1] == nodo.j) {
-            existe = true;
+        if (obs.x == nodo.i
+            && obs.y == nodo.j
+            && obs.penalizacion != undefined
+            && obs.penalizacion != Infinity) {
+                
+            obstaculo = true;
         }
     })
 
-    return !existe;
+    return obstaculo;
 }
 
 // function busquedaArray(lista, elem) {
@@ -158,7 +161,7 @@ function buscarCamino() {
                 break;
             }
 
-            if (noObstaculo(n_actual)) {
+            if (!esObstaculo(n_actual)) {
                 n_actual.expandir();
 
                 n_actual.hijos.forEach(hijo => {
