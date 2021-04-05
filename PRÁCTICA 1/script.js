@@ -112,7 +112,7 @@
                             obstaculos.splice(posArray, 1)
                         }
                         else {
-                            $("#" + this.id).css("background-color", "#ffd600").text("!")
+                            $("#" + this.id).css("background-color", "#ffd600").text("X")
                             console.log(posicionMatricial(posicion))
                             obstaculos.push(posicion)
                         }
@@ -129,12 +129,20 @@
                     columns,
                     rows,
                     posicionMatricial(inicio),
-                    posicionMatricial(meta)
+                    posicionMatricial(meta),
+                    obstaculos.map(obstaculo => posicionMatricial(obstaculo))
                 );
 
                 let s = buscarCamino();
                 console.log(s);
-                pintarCamino(s);
+
+                if (s.length > 0) {
+                    pintarCamino(s);
+                } else if (s.length == 0) {
+                    alert("Las celdas son contiguas, no se puede dibujar el camino");
+                } else if(s == -1) {
+                    alert("No hay un camino posible");
+                }
             }
             else {
                 alert("No has establecido un inicio y un final");

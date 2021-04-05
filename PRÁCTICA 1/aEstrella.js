@@ -3,6 +3,7 @@ let filas = 5;
 let mapa;
 let met;
 let inici;
+let obstaculs;
 let listaAbierta;
 let listaCerrada;
 
@@ -19,9 +20,6 @@ const direcciones = [
 
 function nodoMinimaF(lista) {
     indiceMinima = 0; //suponemos que está en el primero
-
-
-    lista.sort((a, b) => (a.f < b.f) ? 1 : -1)
 
     for (let i = 0; i < lista.length; i++) {
         if (lista[i].f < lista[indiceMinima].f) {
@@ -44,6 +42,18 @@ function distancia(nodo1, nodo2) {
     return Math.sqrt(
         Math.pow((nodo2.i - nodo1.i), 2)
         + Math.pow((nodo2.j - nodo1.j), 2));
+}
+
+function noObstaculo(nodo) {
+    let existe = false;
+    obstaculs.forEach(obs => {
+        if (obs[0] == nodo.i
+            && obs[1] == nodo.j) {
+            existe = true;
+        }
+    })
+
+    return !existe;
 }
 
 // function busquedaArray(lista, elem) {
@@ -91,7 +101,7 @@ function nodo(i, j) {
 
 }
 
-function inicializarMapa(c, f, p_i, p_m) {
+function inicializarMapa(c, f, p_i, p_m, o) {
     listaAbierta = [];
     listaCerrada = [];
     inicio_i = p_i[0];
@@ -120,6 +130,8 @@ function inicializarMapa(c, f, p_i, p_m) {
     inici.h = distancia(inici, met);
     inici.f = inici.g + inici.h;
 
+    //añado obstaculos
+    obstaculs = o;
 }
 
 function buscarCamino() {
@@ -134,48 +146,47 @@ function buscarCamino() {
         }
 
         n_actual = nodoMinimaF(listaAbierta);
+        console.log(n_actual)
 
         if (n_actual !== undefined) {
+
             eliminarDeArray(n_actual, listaAbierta);
-
             listaCerrada.push(n_actual);
-
-            console.log("NAct: [" + n_actual.i + ", " + n_actual.j + "]");
-            console.log("Meta: [" + met.i + ", " + met.j + "]")
-            console.log("_____________________")
-
 
             if (n_actual == met) {
                 fin = true;
                 break;
             }
 
-            n_actual.expandir();
+            if (noObstaculo(n_actual)) {
+                n_actual.expandir();
 
-            n_actual.hijos.forEach(hijo => {
+                n_actual.hijos.forEach(hijo => {
 
-                let nuevaDistancia = n_actual.g + distancia(n_actual, hijo);
+                    let nuevaDistancia = n_actual.g + distancia(n_actual, hijo);
 
-                if (listaAbierta.includes(hijo)) {
-                    if (nuevaDistancia < hijo.g) {
-                        hijo.g = nuevaDistancia;
+                    if (listaAbierta.includes(hijo)) {
+                        if (nuevaDistancia < hijo.g) {
+                            hijo.g = nuevaDistancia;
+                            hijo.f = hijo.g + hijo.h;
+                            hijo.padre = n_actual;
+                        }
+
+                    } else if (listaCerrada.includes(hijo)) {
+                        if (nuevaDistancia < hijo.g) {
+                            //cambiar la g, el padre y hacer recorrido en profundidad de sus hijos
+                        }
+
+                    } else { //no está ni en abierta ni en cerrada
+                        hijo.g = n_actual.g + distancia(n_actual, hijo);
+                        hijo.h = distancia(hijo, met);
                         hijo.f = hijo.g + hijo.h;
                         hijo.padre = n_actual;
+                        listaAbierta.push(hijo);
                     }
+                })
+            }
 
-                } else if (listaCerrada.includes(hijo)) {
-                    if (nuevaDistancia < hijo.g) {
-                        //cambiar la g, el padre y hacer recorrido en profundidad de sus hijos
-                    }
-
-                } else { //no está ni en abierta ni en cerrada
-                    hijo.g = n_actual.g + distancia(n_actual, hijo);
-                    hijo.h = distancia(hijo, met);
-                    hijo.f = hijo.g + hijo.h;
-                    hijo.padre = n_actual;
-                    listaAbierta.push(hijo);
-                }
-            })
 
 
             // console.log(mapa);
@@ -205,7 +216,11 @@ function buscarCamino() {
         solucion.pop(); //No nos interesa el nodo de inicio.
         solucion.reverse(); //Para dibujar el camino, del principio
 
+        console.log(solucion);
         return solucion;
+    } else {
+        console.log("-1");
+        return -1;
     }
 
     /*console.log("metaaaaaaaaaaa");
