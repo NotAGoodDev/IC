@@ -118,14 +118,14 @@ $(function () {
 
                     posArray = posicionArrayObstaculo(posicion);
 
-                    if (posArray != -1) {
+                    if (posArray != -1) {   //Limpiar casillas
                         let obstaculo = obstaculos[posArray];
                         limpiarCasilla(posicionLineal(obstaculo.x + 1, obstaculo.y + 1));
 
                         obstaculos.splice(posArray, 1)
                     }
-                    else {
-                        if (penalizacion == Infinity)
+                    else {  //Crear objeto obstaculo e insertar en array
+                        if (penalizacion == Infinity || penalizacion == "∞")
                             $("#" + this.id).css("background-color", "#ffd600").text("∞");
                         else {
                             $("#" + this.id).css("background-color", "#ffd600").text(penalizacion);
@@ -143,10 +143,14 @@ $(function () {
         })
     })
 
+
     $("#buscar").click(function () {
+
+        //¿Esta todo definido?
         if (columns != undefined && rows != undefined
             && inicio != undefined && meta != undefined) {
 
+            //Limpiar soluciones anteriores
             if (solucion != undefined) {
                 solucion.forEach(celda => {
                     let posArray = posicionArrayObstaculo(posicionLineal(celda.x + 1, celda.y + 1));
@@ -168,6 +172,7 @@ $(function () {
                 });
             }
 
+            //Creamos el mapa
             inicializarMapa(
                 columns,
                 rows,
@@ -175,6 +180,7 @@ $(function () {
                 posicionMatricial(meta),
                 obstaculos
             );
+
 
             solucion = buscarCamino();
 
