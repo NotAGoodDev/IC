@@ -44,14 +44,16 @@ body {
     justify-content: center;
 }
 
-h1 {
+h2 {
     text-align: center;
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
 
 .row {
     display: flex;
     justify-content: center;
-    padding-bottom: 2   0px;
+    padding-bottom: 10px;
 }
 
 .boton {
@@ -62,7 +64,7 @@ h1 {
     align-items: center;
     justify-content: center;
     text-align: center;
-    margin: 10px;
+    margin-right: 10px;
     border-radius: 5px;
 }
 
@@ -73,4 +75,12 @@ h1 {
 
 .penalizacion {
     color: red;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.potencia {
+    color: green;
+    margin-top: 0px;
+    margin-bottom: 0px;
 }

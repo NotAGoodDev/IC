@@ -4,6 +4,7 @@ let mapa;
 let met;
 let inici;
 let obstaculs;
+let potenc;
 let listaAbierta;
 let listaCerrada;
 
@@ -47,11 +48,11 @@ function distancia(nodo1, nodo2) {
 function esInaccesible(nodo) {
     let inaccesible = false;
     obstaculs.forEach(obs => {
+        console.log(potenc)
         if (obs.x == nodo.i
             && obs.y == nodo.j
             && obs.penalizacion != undefined
-            && obs.penalizacion == Infinity) {
-
+            &&  (obs.penalizacion == Infinity || obs.penalizacion > potenc)) {
             inaccesible = true;
         }
     })
@@ -118,7 +119,7 @@ function nodo(i, j) {
 
 }
 
-function inicializarMapa(c, f, p_i, p_m, o) {
+function inicializarMapa(c, f, p_i, p_m, o, p) {
     listaAbierta = [];
     listaCerrada = [];
     inicio_i = p_i[0];
@@ -129,6 +130,7 @@ function inicializarMapa(c, f, p_i, p_m, o) {
     filas = f;
     //añado obstaculos
     obstaculs = o;
+    potenc = p;
 
     mapa = new Array(columnas);
     for (let i = 0; i < mapa.length; i++) {

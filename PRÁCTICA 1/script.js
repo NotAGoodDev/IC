@@ -6,6 +6,7 @@ let meta;
 let obstaculos;
 let click;
 let solucion;
+let potencia;
 
 $(function () {
     rows = 5;
@@ -45,6 +46,18 @@ $(function () {
         cambiarPenalizacion()
     })
 
+    $("#bajarPotencia").click(function () {
+        if(potencia > 1) {
+            potencia -= 1;
+            $("#potencia").text(potencia);
+        }
+    })
+
+    $("#subirPotencia").click(function () {
+        potencia += 1;
+        $("#potencia").text(potencia);
+    })
+
     $("#bajarPenalizacion").click(function () {
 
         if (penalizacion > 1) {
@@ -65,7 +78,6 @@ $(function () {
 
             if (posicion == meta || posicionArrayObstaculo(posicion) != -1) {
                 console.log("Ocupada")
-                // console.log("Inicio: " + inicio + "\n" + "Meta: " + meta + "\n" + "Obstaculos: " + obstaculos)
 
             } else {
                 if (click["inicio"]) {
@@ -111,33 +123,9 @@ $(function () {
 
             if (posicion == inicio || posicion == meta) {
                 console.log("Ocupada")
-                // console.log("Inicio: " + inicio + "\n" + "Meta: " + meta + "\n" + "Obstaculos: " + obstaculos)
-
             } else {
                 if (click["obstaculos"]) {
-
-                    posArray = posicionArrayObstaculo(posicion);
-
-                    if (posArray != -1) {   //Limpiar casillas
-                        let obstaculo = obstaculos[posArray];
-                        limpiarCasilla(posicionLineal(obstaculo.x + 1, obstaculo.y + 1));
-
-                        obstaculos.splice(posArray, 1)
-                    }
-                    else {  //Crear objeto obstaculo e insertar en array
-                        if (penalizacion == Infinity || penalizacion == "∞")
-                            $("#" + this.id).css("background-color", "#ffd600").text("∞");
-                        else {
-                            $("#" + this.id).css("background-color", "#ffd600").text(penalizacion);
-                        }
-
-                        posicion = posicionMatricial(posicion)
-                        obstaculos.push({
-                            x: posicion[0],
-                            y: posicion[1],
-                            penalizacion: penalizacion
-                        })
-                    }
+                    gestionarObstaculos(posicion, this);
                 }
             }
         })
@@ -151,51 +139,22 @@ $(function () {
             && inicio != undefined && meta != undefined) {
 
             //Limpiar soluciones anteriores
-            if (solucion != undefined) {
-                solucion.forEach(celda => {
-                    let posArray = posicionArrayObstaculo(posicionLineal(celda.x + 1, celda.y + 1));
-                    let posicion = posicionLineal(celda.x + 1, celda.y + 1);
+            limpiarSolucionesAnteriores();
 
-                    if (posArray != -1) {
-
-                        if (obstaculos[posArray].penalizacion == Infinity)
-                            $("#elem" + posicion).css("background-color", "#ffd600").text("∞");
-                        else if (obstaculos[posArray].penalizacion > 0) {
-                            $("#elem" + posicion).css("background-color", "#ffd600").text(penalizacion);
-                        } else {
-                            limpiarCasilla(posicion);
-                        }
-                    }
-                    else {
-                        limpiarCasilla(posicion);
-                    }
-                });
-            }
-
-            //Creamos el mapa
             inicializarMapa(
                 columns,
                 rows,
                 posicionMatricial(inicio),
                 posicionMatricial(meta),
-                obstaculos
+                obstaculos,
+                potencia
             );
 
-
             solucion = buscarCamino();
+            gestionarSolucion();
 
-            if (solucion == null) {
-                alert("No hay un camino posible");
-            }
-            else if (solucion.length > 0) {
-                pintarCamino(solucion);
-            } else if (solucion.length == 0) {
-                alert("Las celdas son contiguas, no se puede dibujar el camino");
-
-            }
-            else {
-                alert("No has establecido un inicio y un final");
-            }
+        } else {
+            alert("No se han definido las casillas de inicio y/o meta");
         }
     })
 })
@@ -234,17 +193,14 @@ function reset() {
     click["obstaculos"] = false;
 
     penalizacion = 1;
+    potencia = 1;
 }
 
 function cambiarPenalizacion() {
-    $(".penalizacion").remove()
-
     if (penalizacion != Infinity) {
-        $("#buscar")
-            .after('<h3 class="penalizacion">Penalizacion: ' + penalizacion + '</h3>')
+        $("#penalizacion").text(penalizacion);
     } else {
-        $("#buscar")
-            .after('<h3 class="penalizacion">Penalizacion: ∞</h3>')
+        $("#penalizacion").text("∞");
     }
 }
 
@@ -277,6 +233,64 @@ function activarBoton(boton) {
     $("#obstaculos").css("background-color", "#b2dfdb");
 
     $("#" + boton).css("background-color", "#4db6ac");      //Todo normal y después el boton distinto
+}
+
+function limpiarSolucionesAnteriores() {
+    if (solucion != undefined) {
+        solucion.forEach(celda => {
+            let posArray = posicionArrayObstaculo(posicionLineal(celda.x + 1, celda.y + 1));
+            let posicion = posicionLineal(celda.x + 1, celda.y + 1);
+
+            if (posArray != -1) {
+
+                if (obstaculos[posArray].penalizacion == Infinity)
+                    $("#elem" + posicion).css("background-color", "#ffd600").text("∞");
+                else if (obstaculos[posArray].penalizacion > 0) {
+                    $("#elem" + posicion).css("background-color", "#ffd600").text(penalizacion);
+                } else {
+                    limpiarCasilla(posicion);
+                }
+            }
+            else {
+                limpiarCasilla(posicion);
+            }
+        });
+    }
+}
+
+function gestionarObstaculos(posicion, obj) {
+    posArray = posicionArrayObstaculo(posicion);
+
+    if (posArray != -1) {   //Limpiar casillas
+        let obstaculo = obstaculos[posArray];
+        limpiarCasilla(posicionLineal(obstaculo.x + 1, obstaculo.y + 1));
+
+        obstaculos.splice(posArray, 1)
+    }
+    else {  //Crear objeto obstaculo e insertar en array
+        if (penalizacion == Infinity || penalizacion == "∞")
+            $("#" + obj.id).css("background-color", "#ffd600").text("∞");
+        else {
+            $("#" + obj.id).css("background-color", "#ffd600").text(penalizacion);
+        }
+
+        posicion = posicionMatricial(posicion)
+        obstaculos.push({
+            x: posicion[0],
+            y: posicion[1],
+            penalizacion: penalizacion
+        })
+    }
+}
+
+function gestionarSolucion() {
+    if (solucion == null) {
+        alert("No hay un camino posible");
+    } else if (solucion.length > 0) {
+        pintarCamino(solucion);
+    } else if (solucion.length == 0) {
+        alert("Las celdas son contiguas, no se puede dibujar el camino");
+    }
 }
 
 function pintarCamino(nodos) {
