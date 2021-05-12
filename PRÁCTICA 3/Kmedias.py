@@ -10,8 +10,27 @@ import matplotlib.pyplot as plt
 import os
 
 
+##### PRUEBAS #####
 
+# X = np.array([[1,1,1], [2,2,1]])
+# V = np.array([[3,1,2], [1,2,1], [4,5,4]])
 
+# X = np.array([
+#     [1, 1],
+#     [1, 3],
+#     [1, 5],
+#     [2, 2],
+#     [2, 3],
+#     [6, 3],
+#     [6, 4],
+#     [7, 1],
+#     [7, 3],
+#     [7, 5] 
+# ])
+
+# V = np.array([[6.7, 3.43], [2.39, 2.94]])
+
+##### PRUEBAS #####
 
 
 
@@ -106,6 +125,7 @@ def dibujarGrafica(X, V):
 
 
 def trainKMedias(X, V, b, epsilon):
+    print("\n########## ENTRENAMIENTO DE K-MEDIAS ##########\n")
     i = 0
     while True:
         P = calcularP(X, V, b)
@@ -123,11 +143,13 @@ def trainKMedias(X, V, b, epsilon):
             break
 
         i += 1
-
+        
     return V
 
 
+
 def testKMedias(V, vName):
+    print("########## TEST DE K-MEDIAS ##########")
     for file in os.listdir('test'):
         df = pd.read_csv('test/' + file, header=None)
         pruebaX = np.array(df.iloc[:, :-1])
