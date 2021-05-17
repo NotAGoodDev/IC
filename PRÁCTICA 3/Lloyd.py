@@ -1,40 +1,18 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[20]:
-
 
 import numpy as np
 import pandas as pd
 import os
 
 
-# In[21]:
 
-
-# X = np.array([
-#     [1, 1],
-#     [1, 3],
-#     [1, 5],
-#     [1, 2],
-#     [2, 3],
-#     [2, 3],
-#     [6, 4],
-#     [6, 1],
-#     [7, 3],
-#     [7, 5],
-# ])
-
-# V = np.array([
-#     [1.0, 4.0],
-#     [7.0, 2.0],
-# ])
-
-
-# In[22]:
-
-
-def calcularDistancias(x, V):      
+def calcularDistancias(x, V):
+    """
+        Función que calcula la distancia de un punto X[i] respecto a los centroides
+        Devuelve la posición (en el array) del centroide más cercano
+    """
     posOpt = None
     distOpt = np.inf
 
@@ -47,20 +25,25 @@ def calcularDistancias(x, V):
     return posOpt
 
 
-# In[23]:
-
 
 def distEuclidea(A, B):
+    """
+    Calcula la distancia euclidea de un punto A respecto a B
+    """
     return np.sqrt(np.sum(np.square(A - B)))
 
 
-# In[24]:
 
-
-def testLloyd(V, vName):
+def testLloyd(V, vName, directorio='test'):
+    """
+    Función que calcula la distancia de todas las pruebas ubicadas en la carpeta test a partir del
+    vector de centroides, su etiqueta, y el nombre de la carpeta.
+    No devuelve nada, muestra por pantalla a que clase pertenece dicha prueba
+    """
+    
     print("########## TEST DE LLOYD ##########")
-    for file in os.listdir('test'):
-        df = pd.read_csv('test/' + file, header=None)
+    for file in os.listdir(directorio):
+        df = pd.read_csv(directorio + '/' + file, header=None)
         pruebaX = np.array(df.iloc[:, :-1])
         pruebaY = np.array(df.iloc[:, -1])
         distancias = np.sum(np.square(pruebaX - V), axis=1)
@@ -71,10 +54,13 @@ def testLloyd(V, vName):
         
 
 
-# In[45]:
-
 
 def lloyd(X, V, gamma, kMax, epsilon):
+    """
+    Gestiona el algoritmo de Lloyd, devuelve los centroides entrenados a partir de
+    un conjunto de datos X, los centroides iniciales, un valor gamma, unas iteraciones
+    máximas y un error mínimo epsilon
+    """
     print("\n########## ENTRENAMIENTO DE LLOYD ##########\n")
 
     for it in range(kMax):
@@ -99,17 +85,38 @@ def lloyd(X, V, gamma, kMax, epsilon):
 
             
         print("-"*30)
+        
     return V
 
 
-# In[ ]:
+##### PRUEBAS #####
+
+X = np.array([
+    [1, 1],
+    [1, 3],
+    [1, 5],
+    [1, 2],
+    [2, 3],
+    [2, 3],
+    [6, 4],
+    [6, 1],
+    [7, 3],
+    [7, 5],
+])
+
+V = np.array([
+    [1.0, 4.0],    # C1
+    [7.0, 2.0],    # C2
+])
+
+vName = ['C1', 'C2']
+
+gamma = .1
+kMax = 10
+epsilon = .1
+
+##### PRUEBAS #####
 
 
-
-
-
-# In[ ]:
-
-
-
-
+vNuevo = lloyd(X, V, gamma, kMax, epsilon)
+testLloyd(vNuevo, vName, 'test_lloyd')
